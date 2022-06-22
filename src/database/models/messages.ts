@@ -13,7 +13,7 @@ const MessagesSchema = new Schema({
     type: String,
     required: true,
   },
-  status: {
+  type: {
     type: String,
     enum: ["status", "private_message", "message"],
     required: true,

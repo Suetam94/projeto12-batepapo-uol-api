@@ -17,8 +17,6 @@ class ParticipantsUseCases {
       name,
     });
 
-    await newParticipant.save();
-
     const messagesUseCases = new MessagesUseCases();
 
     const message = {
@@ -35,6 +33,8 @@ class ParticipantsUseCases {
     if (!newMessage) {
       throw new Error("Something went wrong, please try again");
     }
+
+    await newParticipant.save();
 
     return newParticipant;
   }

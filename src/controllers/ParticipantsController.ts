@@ -11,7 +11,7 @@ class ParticipantsController {
     const { name } = req.body;
 
     try {
-      const newParticipant = await this.participantsUseCases.create(name);
+      const newParticipant = await this.participantsUseCases.create({ name });
 
       if (newParticipant instanceof Error) {
         return res.status(409).send();
