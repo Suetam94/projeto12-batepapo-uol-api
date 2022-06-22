@@ -23,9 +23,11 @@ class ParticipantsController {
     }
   }
 
-  getAll(req, res, next) {
+  async getAll(req, res, next) {
     try {
-      return res.status(200).send();
+      const allParticipants =
+        await this.participantsUseCases.getAllParticipants();
+      return res.status(200).json(allParticipants).send();
     } catch (e) {
       return next(e);
     }

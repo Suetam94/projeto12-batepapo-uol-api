@@ -38,6 +38,15 @@ class ParticipantsUseCases {
 
     return newParticipant;
   }
+  async getAllParticipants() {
+    const allParticipants = await Participant.find();
+
+    if (!allParticipants) {
+      throw new Error("Something went wrong, please try again");
+    }
+
+    return allParticipants;
+  }
 }
 
 export { ParticipantsUseCases };
