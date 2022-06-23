@@ -1,12 +1,18 @@
 import { format } from "date-fns";
 
 import Messages from "../../database/models/messages";
+import Participant from "../../database/models/participant";
 
 export interface IMessageCreateData {
   from: string;
   to: string;
   type: "private_message" | "message" | "status";
   text: string;
+}
+
+interface IGetAllMessagesData {
+  user: string;
+  limit?: number;
 }
 
 class MessagesUseCases {
@@ -24,6 +30,29 @@ class MessagesUseCases {
     await newMessage.save();
 
     return newMessage;
+  }
+
+  async getAllMessages({ user, limit }: IGetAllMessagesData) {
+    const allMessages = !limit
+      ? await Messages.find()
+      : await Messages.find().limit(limit);
+
+    const userExists = await Participant.findOne({ name: user });
+
+    if (!userExists) {
+      return new Error();
+    }
+
+    return (
+      allMessages
+        // eslint-disable-next-line array-callback-return,consistent-return
+        .map((message) => {
+          if (message.to === user || message.to === "Todos") {
+            return message;
+          }
+        })
+        .filter((message) => message)
+    );
   }
 }
 
