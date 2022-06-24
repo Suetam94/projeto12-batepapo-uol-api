@@ -1,7 +1,13 @@
 import { Router } from "express";
 
+import { StatusController } from "../controllers/StatusController";
+
 const statusRoutes = Router();
 
-statusRoutes.post("/", (req, res, next) => {});
+const statusController = new StatusController();
+
+statusRoutes.post("/", (req, res, next) =>
+  statusController.updateUserStatus(req, res, next)
+);
 
 export { statusRoutes };

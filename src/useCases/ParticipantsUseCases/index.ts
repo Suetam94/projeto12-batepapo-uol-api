@@ -38,6 +38,7 @@ class ParticipantsUseCases {
 
     return newParticipant;
   }
+
   async getAllParticipants() {
     const allParticipants = await Participant.find();
 
@@ -46,6 +47,13 @@ class ParticipantsUseCases {
     }
 
     return allParticipants;
+  }
+
+  async updateParticipantStatus(user: string) {
+    return Participant.findOneAndUpdate(
+      { name: user },
+      { $set: { lastStatus: new Date() } }
+    );
   }
 }
 

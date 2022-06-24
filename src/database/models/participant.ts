@@ -4,6 +4,7 @@ const ParticipantSchema = new Schema({
   name: {
     type: String,
     required: true,
+    unique: true,
   },
   lastStatus: {
     type: Date,
