@@ -58,7 +58,7 @@ class MessagesController {
 
   async getAll(req, res, next) {
     const { user } = req.headers;
-    const { limit } = req.params;
+    const { limit } = req.query;
 
     try {
       const allMessages = await this.messagesUseCases.getAllMessages({
