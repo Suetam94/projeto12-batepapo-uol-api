@@ -20,7 +20,7 @@ class ParticipantsUseCases {
     const messagesUseCases = new MessagesUseCases();
 
     const message = {
-      from: newParticipant.name,
+      from: name,
       to: "Todos",
       text: "entra na sala...",
       type: "status",

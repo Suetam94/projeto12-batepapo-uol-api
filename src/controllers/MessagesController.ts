@@ -1,4 +1,9 @@
 import { MessagesUseCases } from "../useCases/MessagesUseCases";
+import {
+  IMessageContent,
+  MessageValidator,
+} from "../utils/validators/MessageValidator";
+import { ParticipantValidator } from "../utils/validators/ParticipantValidator";
 
 class MessagesController {
   private messagesUseCases: MessagesUseCases;
@@ -6,30 +11,39 @@ class MessagesController {
     this.messagesUseCases = new MessagesUseCases();
   }
 
-  create(req, res, next) {
+  async create(req, res, next) {
     const { to, text, type } = req.body;
     const { user } = req.headers;
+    const messageObj = {
+      to,
+      text,
+      type,
+    };
 
-    if (!user) {
-      throw new Error("User is required");
-    }
-
-    if (!to) {
-      throw new Error("Message to is required");
-    }
-    if (!text) {
-      throw new Error("Message text is required");
-    }
-    if (!type) {
-      throw new Error("Message type is required");
-    }
+    const messageValidator = new MessageValidator();
+    const participantValidator = new ParticipantValidator();
 
     try {
+      const messageVerified = (await messageValidator.validate(messageObj)) as
+        | IMessageContent
+        | Error;
+
+      const participantVerified = (await participantValidator.validate(
+        user
+      )) as string | Error;
+
+      if (
+        messageVerified instanceof Error ||
+        participantVerified instanceof Error
+      ) {
+        return res.status(422).send();
+      }
+
       const newMessage = this.messagesUseCases.create({
-        text,
-        type,
-        to,
-        from: user,
+        text: messageVerified.text,
+        type: messageVerified.type as "message" | "private_message",
+        to: messageVerified.to,
+        from: participantVerified,
       });
 
       if (newMessage instanceof Error) {

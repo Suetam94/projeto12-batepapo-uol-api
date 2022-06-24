@@ -1,4 +1,5 @@
 import { ParticipantsUseCases } from "../useCases/ParticipantsUseCases";
+import { ParticipantValidator } from "../utils/validators/ParticipantValidator";
 
 class ParticipantsController {
   private participantsUseCases: ParticipantsUseCases;
@@ -10,8 +11,20 @@ class ParticipantsController {
   async create(req, res, next) {
     const { name } = req.body;
 
+    const participantValidator = new ParticipantValidator();
+
     try {
-      const newParticipant = await this.participantsUseCases.create({ name });
+      const verifiedName = (await participantValidator.validate(name)) as
+        | string
+        | Error;
+
+      if (verifiedName instanceof Error) {
+        return res.status(422).send();
+      }
+
+      const newParticipant = await this.participantsUseCases.create({
+        name: verifiedName,
+      });
 
       if (newParticipant instanceof Error) {
         return res.status(409).send();
