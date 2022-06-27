@@ -1,3 +1,6 @@
+import { differenceInSeconds, format } from "date-fns";
+
+import Messages from "../../database/models/messages";
 import Participant from "../../database/models/participant";
 import { IMessageCreateData, MessagesUseCases } from "../MessagesUseCases";
 
@@ -54,6 +57,39 @@ class ParticipantsUseCases {
       { name: user },
       { $set: { lastStatus: new Date() } }
     );
+  }
+
+  async verifyUserActivity() {
+    const allParticipants = await this.getAllParticipants();
+
+    if (!allParticipants) {
+      return false;
+    }
+
+    allParticipants.forEach((participant) => {
+      const dateInterval = differenceInSeconds(
+        new Date(),
+        participant.lastStatus
+      );
+
+      if (dateInterval > 10) {
+        Messages.create({
+          from: participant.name,
+          to: "Todos",
+          text: "sai da sala...",
+          type: "status",
+          time: format(new Date(), "HH:mm:ss"),
+        }).then(() =>
+          Messages.deleteMany({ from: participant.name }).then((x) =>
+            console.log(x)
+          )
+        );
+
+        participant.delete();
+      }
+    });
+
+    return true;
   }
 }
 

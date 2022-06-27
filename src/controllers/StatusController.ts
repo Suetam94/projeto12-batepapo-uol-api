@@ -2,7 +2,6 @@ import { ParticipantsUseCases } from "../useCases/ParticipantsUseCases";
 
 class StatusController {
   private participantsUseCases: ParticipantsUseCases;
-  // verifyUserStatus(req, res, next) {}
   constructor() {
     this.participantsUseCases = new ParticipantsUseCases();
   }

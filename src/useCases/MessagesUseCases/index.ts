@@ -2,6 +2,7 @@ import { format } from "date-fns";
 
 import Messages from "../../database/models/messages";
 import Participant from "../../database/models/participant";
+import { ParticipantsUseCases } from "../ParticipantsUseCases";
 
 export interface IMessageCreateData {
   from: string;
@@ -28,6 +29,10 @@ class MessagesUseCases {
     });
 
     await newMessage.save();
+
+    const participantUseCases = new ParticipantsUseCases();
+
+    await participantUseCases.updateParticipantStatus(from);
 
     return newMessage;
   }
