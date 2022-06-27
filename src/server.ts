@@ -13,6 +13,17 @@ app.use(cors());
 app.use(express.json());
 app.use(routes);
 
+app.use((err, req, res, next) => {
+  const errorStatus = err.status || 404;
+  const errosMessage = err.message || "Something went wrong";
+  return res.status(errorStatus).json({
+    success: false,
+    status: errorStatus,
+    message: errosMessage,
+    stack: err.stack,
+  });
+});
+
 app.listen(5000, () =>
   console.log("Server is running at http://localhost:5000")
 );

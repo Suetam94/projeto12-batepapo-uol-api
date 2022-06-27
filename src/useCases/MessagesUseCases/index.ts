@@ -16,6 +16,11 @@ interface IGetAllMessagesData {
   limit?: number;
 }
 
+interface IGetMessagesData {
+  user: string;
+  id: number;
+}
+
 class MessagesUseCases {
   async create({ text, to, from, type }: IMessageCreateData) {
     const time = format(new Date(), "HH:mm:ss");
@@ -58,6 +63,38 @@ class MessagesUseCases {
         })
         .filter((message) => message)
     );
+  }
+
+  async updateMessage({ user, id, data }) {
+    const userExists = await Participant.findOne({ name: user });
+
+    if (!userExists) {
+      return new Error();
+    }
+
+    const message = await Messages.findById(id);
+
+    if (!message) {
+      return new Error();
+    }
+
+    return message.update(data);
+  }
+
+  async deleteMessage({ user, id }: IGetMessagesData) {
+    const userExists = await Participant.findOne({ name: user });
+
+    if (!userExists) {
+      return new Error();
+    }
+
+    const message = await Messages.findById(id);
+
+    if (!message) {
+      return new Error();
+    }
+
+    return message.delete();
   }
 }
 

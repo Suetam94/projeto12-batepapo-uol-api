@@ -75,6 +75,47 @@ class MessagesController {
       return next(e);
     }
   }
+
+  async updateMessage(req, res, next) {
+    const { user } = req.headers;
+    const { id } = req.params;
+
+    try {
+      const messageUpdated = await this.messagesUseCases.updateMessage({
+        user,
+        id,
+        data: req.body,
+      });
+
+      if (messageUpdated instanceof Error) {
+        return res.status(404).send();
+      }
+
+      return res.status(200).send();
+    } catch (e) {
+      return next(e);
+    }
+  }
+
+  async deleteMessage(req, res, next) {
+    const { user } = req.headers;
+    const { id } = req.params;
+
+    try {
+      const messageDeleted = await this.messagesUseCases.deleteMessage({
+        user,
+        id,
+      });
+
+      if (messageDeleted instanceof Error) {
+        return res.status(404).send();
+      }
+
+      return res.status(200).send();
+    } catch (e) {
+      return next(e);
+    }
+  }
 }
 
 export { MessagesController };
